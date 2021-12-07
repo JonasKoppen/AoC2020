@@ -10,6 +10,7 @@ WIDTH = 5
 """
 
 def bingo(board, newNum):
+    found = False
     for row in range(HEIGHT):
         bingo = 0
         for col in range(WIDTH):
@@ -17,15 +18,18 @@ def bingo(board, newNum):
                 bingo+=1
                 board[row][col] = -1
         if(bingo == HEIGHT):
-            return True    
+            found = True
+    if(found):
+        return True
 
-    for row in range(HEIGHT):
-            bingo = 0
-            for col in range(WIDTH):
-                if(board[col][row] == -1):
-                    bingo+=1
-            if(bingo == HEIGHT):
-                return True
+    for col in range(WIDTH):
+        bingo = 0
+        for row in range(HEIGHT):
+            if(board[row][col] == -1 or board[row][col] == newNum):
+                bingo+=1
+                board[row][col] = -1
+        if(bingo == HEIGHT):
+            return True
     return False
 
 def remainSum(board):
@@ -74,8 +78,8 @@ file.close()
 def removeCard(bingoCards, newNum, startIndex):
     for i in range(startIndex, len(bingoCards)):
         if(bingo(bingoCards[i], newNum)):
-            return i
-    return -1
+            return bingoCards[i]
+    return []
 
 def test2(fnum):
     
@@ -105,11 +109,16 @@ def test2(fnum):
             print(bingoCards[0])
             return remainSum(bingoCards[0]) * newNum   
         remove = removeCard(bingoCards, newNum, 0)
-        while(remove >= 0):
-            #print(remove)
-            bingoCards.pop(remove)
-            remove = removeCard(bingoCards, newNum, remove-1)    
-        
+        print("remove at index: " + str(remove))
+        eliminated = 0
+        while(remove != []):
+            eliminated+=1
+            bingoCards.remove(remove)
+            #print('\n'.join([''.join(['{:4}'.format(item) for item in row]) for row in bingoCards.remove(remove)]))
+            remove = removeCard(bingoCards, newNum, 0)    
+        print("Number found: " + str(newNum))
+        print("Eliminated: " + str(eliminated))
+        print("Remaining: " + str(len(bingoCards)))
         if(len(bingoCards) < 5):
             print(newNum)
             for card in bingoCards:
